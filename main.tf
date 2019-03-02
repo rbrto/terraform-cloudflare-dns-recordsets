@@ -122,8 +122,11 @@ resource "cloudflare_record" "a" {
 
   domain = var.zone_name
 
-  name = local.a_records[count.index].name != "" ? local.a_records[count.index].name : "@"
-
+  name = (
+    local.a_records[count.index].name != "" ?
+    local.a_records[count.index].name :
+    "@"
+  )
   type  = local.a_records[count.index].type
   ttl   = local.a_records[count.index].ttl
   value = local.a_records[count.index].data
@@ -134,8 +137,11 @@ resource "cloudflare_record" "aaaa" {
 
   domain = var.zone_name
 
-  name = local.aaaa_records[count.index].name != "" ? local.aaaa_records[count.index].name : "@"
-
+  name = (
+    local.aaaa_records[count.index].name != "" ?
+    local.aaaa_records[count.index].name :
+    "@"
+  )
   type  = local.aaaa_records[count.index].type
   ttl   = local.aaaa_records[count.index].ttl
   value = local.aaaa_records[count.index].data
@@ -146,8 +152,11 @@ resource "cloudflare_record" "cname" {
 
   domain = var.zone_name
 
-  name = local.cname_records[count.index].name != "" ? local.cname_records[count.index].name : "@"
-
+  name = (
+    local.cname_records[count.index].name != "" ?
+    local.cname_records[count.index].name :
+    "@"
+  )
   type  = local.cname_records[count.index].type
   ttl   = local.cname_records[count.index].ttl
   value = local.cname_records[count.index].data
@@ -158,8 +167,11 @@ resource "cloudflare_record" "mx" {
 
   domain = var.zone_name
 
-  name = local.mx_records[count.index].name != "" ? local.mx_records[count.index].name : "@"
-
+  name = (
+    local.mx_records[count.index].name != "" ?
+    local.mx_records[count.index].name :
+    "@"
+  )
   type     = local.mx_records[count.index].type
   ttl      = local.mx_records[count.index].ttl
   priority = split(" ", local.mx_records[count.index].data)[0]
@@ -171,8 +183,11 @@ resource "cloudflare_record" "ns" {
 
   domain = var.zone_name
 
-  name = local.ns_records[count.index].name != "" ? local.ns_records[count.index].name : "@"
-
+  name = (
+    local.ns_records[count.index].name != "" ?
+    local.ns_records[count.index].name :
+    "@"
+  )
   type  = local.ns_records[count.index].type
   ttl   = local.ns_records[count.index].ttl
   value = local.ns_records[count.index].data
@@ -184,7 +199,6 @@ resource "cloudflare_record" "srv" {
   domain = var.zone_name
 
   name = local.srv_records[count.index].name
-
   type = local.srv_records[count.index].type
   ttl  = local.srv_records[count.index].ttl
 
@@ -204,8 +218,11 @@ resource "cloudflare_record" "txt" {
 
   domain = var.zone_name
 
-  name = local.txt_records[count.index].name != "" ? local.txt_records[count.index].name : "@"
-
+  name = (
+    local.txt_records[count.index].name != "" ?
+    local.txt_records[count.index].name :
+    "@"
+  )
   type  = local.txt_records[count.index].type
   ttl   = local.txt_records[count.index].ttl
   value = local.txt_records[count.index].data
@@ -216,8 +233,11 @@ resource "cloudflare_record" "ptr" {
 
   domain = var.zone_name
 
-  name = local.ptr_records[count.index].name != "" ? local.ptr_records[count.index].name : "@"
-
+  name = (
+    local.ptr_records[count.index].name != "" ?
+    local.ptr_records[count.index].name :
+    "@"
+  )
   type  = local.ptr_records[count.index].type
   ttl   = local.ptr_records[count.index].ttl
   value = local.ptr_records[count.index].data
