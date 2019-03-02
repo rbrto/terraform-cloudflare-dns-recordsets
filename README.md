@@ -2,7 +2,7 @@
 
 This module manages DNS recordsets in a Cloudflare DNS zone. It follows the structure of [the `terraformdns` project](https://terraformdns.github.io/).
 
-# Example Usage
+## Example Usage
 
 ```hcl
 locals {
