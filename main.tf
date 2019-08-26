@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12.0"
+  required_version = "~> 0.12.6"
 }
 
 data "cloudflare_zones" "main" {
@@ -9,7 +9,7 @@ data "cloudflare_zones" "main" {
 }
 
 locals {
-  recordsets = { for rs in var.recordsets : rs.type => rs ... }
+  recordsets = { for rs in var.recordsets : rs.type => rs... }
 
   a_recordsets     = lookup(local.recordsets, "A", [])
   aaaa_recordsets  = lookup(local.recordsets, "AAAA", [])
@@ -21,84 +21,84 @@ locals {
   ptr_recordsets   = lookup(local.recordsets, "PTR", [])
 
   a_records = flatten([
-    for rs in local.a_recordsets : flatten([
+    for rs in local.a_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   aaaa_records = flatten([
-    for rs in local.aaaa_recordsets : flatten([
+    for rs in local.aaaa_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   cname_records = flatten([
-    for rs in local.cname_recordsets : flatten([
+    for rs in local.cname_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   mx_records = flatten([
-    for rs in local.mx_recordsets : flatten([
+    for rs in local.mx_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   ns_records = flatten([
-    for rs in local.ns_recordsets : flatten([
+    for rs in local.ns_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   srv_records = flatten([
-    for rs in local.srv_recordsets : flatten([
+    for rs in local.srv_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   txt_records = flatten([
-    for rs in local.txt_recordsets : flatten([
+    for rs in local.txt_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
   ptr_records = flatten([
-    for rs in local.ptr_recordsets : flatten([
+    for rs in local.ptr_recordsets : [
       for r in rs.records : {
         name = rs.name
         type = rs.type
         ttl  = rs.ttl
         data = r
       }
-    ])
+    ]
   ])
 
   supported_record_types = {
@@ -118,127 +118,122 @@ locals {
 }
 
 resource "cloudflare_record" "a" {
-  count = length(local.a_records)
+  for_each = {
+    for r in local.a_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.a_records[count.index].name != "" ?
-    local.a_records[count.index].name :
-    "@"
-  )
-  type  = local.a_records[count.index].type
-  ttl   = local.a_records[count.index].ttl
-  value = local.a_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
 
 resource "cloudflare_record" "aaaa" {
-  count = length(local.aaaa_records)
+  for_each = {
+    for r in local.aaaa_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.aaaa_records[count.index].name != "" ?
-    local.aaaa_records[count.index].name :
-    "@"
-  )
-  type  = local.aaaa_records[count.index].type
-  ttl   = local.aaaa_records[count.index].ttl
-  value = local.aaaa_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
 
 resource "cloudflare_record" "cname" {
-  count = length(local.cname_records)
+  for_each = {
+    for r in local.cname_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.cname_records[count.index].name != "" ?
-    local.cname_records[count.index].name :
-    "@"
-  )
-  type  = local.cname_records[count.index].type
-  ttl   = local.cname_records[count.index].ttl
-  value = local.cname_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
 
 resource "cloudflare_record" "mx" {
-  count = length(local.mx_records)
+  for_each = {
+    for r in local.mx_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.mx_records[count.index].name != "" ?
-    local.mx_records[count.index].name :
-    "@"
-  )
-  type     = local.mx_records[count.index].type
-  ttl      = local.mx_records[count.index].ttl
-  priority = split(" ", local.mx_records[count.index].data)[0]
-  value    = split(" ", local.mx_records[count.index].data)[1]
+  name = coalesce(each.value.name, "@")
+
+  type     = each.value.type
+  ttl      = each.value.ttl
+  priority = split(" ", each.value.data)[0]
+  value    = split(" ", each.value.data)[1]
 }
 
 resource "cloudflare_record" "ns" {
-  count = length(local.ns_records)
+  for_each = {
+    for r in local.ns_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.ns_records[count.index].name != "" ?
-    local.ns_records[count.index].name :
-    "@"
-  )
-  type  = local.ns_records[count.index].type
-  ttl   = local.ns_records[count.index].ttl
-  value = local.ns_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
 
 resource "cloudflare_record" "srv" {
-  count = length(local.srv_records)
+  for_each = {
+    for r in local.srv_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = local.srv_records[count.index].name
-  type = local.srv_records[count.index].type
-  ttl  = local.srv_records[count.index].ttl
+  name = each.value.name
+  type = each.value.type
+  ttl  = each.value.ttl
 
   data = {
-    service = split(".", local.srv_records[count.index].name)[0]
-    proto   = split(".", local.srv_records[count.index].name)[1]
+    service = split(".", each.value.name)[0]
+    proto   = split(".", each.value.name)[1]
 
-    priority = split(" ", local.srv_records[count.index].data)[0]
-    weight   = split(" ", local.srv_records[count.index].data)[1]
-    port     = split(" ", local.srv_records[count.index].data)[2]
-    target   = split(" ", local.srv_records[count.index].data)[3]
+    priority = split(" ", each.value.data)[0]
+    weight   = split(" ", each.value.data)[1]
+    port     = split(" ", each.value.data)[2]
+    target   = split(" ", each.value.data)[3]
   }
 }
 
 resource "cloudflare_record" "txt" {
-  count = length(local.txt_records)
+  for_each = {
+    for r in local.txt_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.txt_records[count.index].name != "" ?
-    local.txt_records[count.index].name :
-    "@"
-  )
-  type  = local.txt_records[count.index].type
-  ttl   = local.txt_records[count.index].ttl
-  value = local.txt_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
 
 resource "cloudflare_record" "ptr" {
-  count = length(local.ptr_records)
+  for_each = {
+    for r in local.ptr_records : "${r.name} ${r.type} ${r.data}" => r
+  }
 
   domain = var.zone_name
 
-  name = (
-    local.ptr_records[count.index].name != "" ?
-    local.ptr_records[count.index].name :
-    "@"
-  )
-  type  = local.ptr_records[count.index].type
-  ttl   = local.ptr_records[count.index].ttl
-  value = local.ptr_records[count.index].data
+  name = coalesce(each.value.name, "@")
+
+  type  = each.value.type
+  ttl   = each.value.ttl
+  value = each.value.data
 }
