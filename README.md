@@ -13,6 +13,7 @@ module "dns_records" {
   source = "innovationnorway/dns-recordsets/cloudflare"
 
   zone_name = local.cloudflare_zone
+
   recordsets = [
     {
       name    = "www"
@@ -69,12 +70,6 @@ cause recordsets to be removed and replaced by the next plan.
   recordset format](https://terraformdns.github.io/about/).
 
 This module requires the [`cloudflare`](https://www.terraform.io/docs/providers/cloudflare/index.html) provider.
-
-Due to current limitations of the Terraform language, recordsets in Cloudflare
-are correlated to `recordsets` elements using the index into the
-`recordsets` list. Adding or removing records from the list will therefore
-cause this module to also update all records with indices greater than where
-the addition or removal was made.
 
 ## Limitations
 As with all `terraformdns` modules, this module uses a generic, portable model of DNS recordsets and therefore it cannot make use of Cloudflare-specific features such as proxied DNS records etc.
